@@ -32,7 +32,7 @@ async def create_lead(lead: LeadCreate, background_tasks: BackgroundTasks):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/", response_model=List[LeadPublic])
+@router.get("", response_model=List[LeadPublic])
 async def list_leads(limit: int = 50, offset: int = 0):
     """
     List all leads, newest first.
@@ -40,7 +40,7 @@ async def list_leads(limit: int = 50, offset: int = 0):
     try:
         response = supabase.from_("leads") \
             .select("*") \
-            .order("created_at", vertical=False, desc=True) \
+            .order("created_at", desc=True) \
             .range(offset, offset + limit - 1) \
             .execute()
             

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routes import leads
+from app.routes.leads import router as leads_router
 
 app = FastAPI(title="Lead Scoring Dashboard API", version="0.1.0")
 
@@ -14,8 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(leads.router, prefix="/api")
-
+app.include_router(leads_router, prefix="/api")
 
 @app.get("/api/health")
 async def health() -> dict:

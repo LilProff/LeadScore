@@ -55,7 +55,8 @@ Return ONLY a JSON object with this exact shape, no prose, no markdown:
                 {"role": "user", "content": json.dumps(lead_data)}
             ],
             response_format={"type": "json_object"},
-            temperature=0.2
+            temperature=0.2,
+            max_tokens=1000
         )
 
         result = json.loads(response.choices[0].message.content)
