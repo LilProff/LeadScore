@@ -1,0 +1,13 @@
+# Phase 1: minimal deps for skeleton (Supabase client added in Phase 2)
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+httpx>=0.27.0
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
+
+# Phase 2 additions (requires Python 3.11-3.12, or build tools on 3.14):
+# supabase>=2.10.0
+# anthropic>=0.40.0
