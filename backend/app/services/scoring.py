@@ -15,6 +15,10 @@ def score_lead(lead_id: str, lead_data: dict):
         client = OpenAI(
             base_url=settings.openrouter_base_url,
             api_key=settings.anthropic_api_key,
+            default_headers={
+                "HTTP-Referer": "https://github.com/LilProff/LeadScore",
+                "X-Title": "LeadScore Dashboard",
+            }
         )
 
         system_prompt = """
@@ -56,7 +60,7 @@ Return ONLY a JSON object with this exact shape, no prose, no markdown:
             ],
             response_format={"type": "json_object"},
             temperature=0.2,
-            max_tokens=1000
+            max_tokens=400
         )
 
         result = json.loads(response.choices[0].message.content)
