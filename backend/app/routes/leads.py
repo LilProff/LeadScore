@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from app.models.lead import LeadCreate, LeadPublic
 from app.services.supabase_client import supabase
@@ -26,6 +27,24 @@ async def create_lead(lead: LeadCreate, background_tasks: BackgroundTasks):
         background_tasks.add_task(score_lead, lead_id, data)
         
         return {"id": lead_id, "status": "pending"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/", response_model=List[LeadPublic])
+async def list_leads(limit: int = 50, offset: int = 0):
+    """
+    List all leads, newest first.
+    """
+    try:
+        response = supabase.from_("leads") \
+            .select("*") \
+            .order("created_at", vertical=False, desc=True) \
+            .range(offset, offset + limit - 1) \
+            .execute()
+            
+        return response.data
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
