@@ -52,7 +52,6 @@ Return ONLY a JSON object with this exact shape, no prose, no markdown:
 }
 """
 
-        print(f"DEBUG: Calling OpenRouter with model {settings.ai_model_name} and max_tokens=400")
         response = client.chat.completions.create(
             model=settings.ai_model_name,
             messages=[
@@ -64,8 +63,6 @@ Return ONLY a JSON object with this exact shape, no prose, no markdown:
         )
 
         content = response.choices[0].message.content
-        print(f"DEBUG: OpenRouter response content: {content}")
-        
         if not content:
             raise ValueError("OpenRouter returned empty content")
 
