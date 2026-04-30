@@ -7,14 +7,14 @@ from app.services.supabase_client import supabase
 
 logger = logging.getLogger(__name__)
 
-def score_lead(lead_id: str, lead_data: dict):
+def score_lead_v2(lead_id: str, lead_data: dict):
     """
     Background task to score a lead using AI and update Supabase.
     """
     try:
         client = OpenAI(
             base_url=settings.openrouter_base_url,
-            api_key=settings.anthropic_api_key,
+            api_key=settings.ai_api_key,
             default_headers={
                 "HTTP-Referer": "https://github.com/LilProff/LeadScore",
                 "X-Title": "LeadScore Dashboard",
@@ -52,18 +52,28 @@ Return ONLY a JSON object with this exact shape, no prose, no markdown:
 }
 """
 
+        print(f"DEBUG: Calling OpenRouter with model {settings.ai_model_name} and max_tokens=400")
         response = client.chat.completions.create(
-            model=settings.anthropic_model,
+            model=settings.ai_model_name,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": json.dumps(lead_data)}
             ],
-            response_format={"type": "json_object"},
             temperature=0.2,
             max_tokens=400
         )
 
-        result = json.loads(response.choices[0].message.content)
+        content = response.choices[0].message.content
+        print(f"DEBUG: OpenRouter response content: {content}")
+        
+        if not content:
+            raise ValueError("OpenRouter returned empty content")
+
+        # Strip markdown if present
+        if content.startswith("```"):
+            content = content.strip("`").strip("json").strip()
+
+        result = json.loads(content)
 
         # Update Supabase
         supabase.from_("leads").update({

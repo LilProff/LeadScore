@@ -4,8 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     supabase_url: str = ""
     supabase_service_role_key: str = ""
-    anthropic_api_key: str = ""
-    anthropic_model: str = "google/gemini-2.0-flash-exp:free"
+    ai_api_key: str = ""
+    ai_model_name: str = "google/gemini-2.0-flash-lite-preview-02-05:free"
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
     cors_origins: str = "http://localhost:5173"
 

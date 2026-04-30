@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from app.models.lead import LeadCreate, LeadPublic
 from app.services.supabase_client import supabase
-from app.services.scoring import score_lead
+from app.services.scoring import score_lead_v2
 
 router = APIRouter(prefix="/leads", tags=["leads"])
 
@@ -24,7 +24,7 @@ async def create_lead(lead: LeadCreate, background_tasks: BackgroundTasks):
         lead_id = new_lead["id"]
         
         # Trigger AI scoring in the background
-        background_tasks.add_task(score_lead, lead_id, data)
+        background_tasks.add_task(score_lead_v2, lead_id, data)
         
         return {"id": lead_id, "status": "pending"}
         
