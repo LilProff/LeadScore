@@ -17,14 +17,15 @@ export default function AdminPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    console.log('AdminPage: useEffect triggered')
     async function load() {
       try {
-        console.log('Fetching leads...')
+        console.log('AdminPage: calling listLeads...')
         const data = await listLeads()
-        console.log('Leads received:', data)
+        console.log('AdminPage: data received', data)
         setLeads(data)
       } catch (err) {
-        console.error('Fetch error:', err)
+        console.error('AdminPage: error', err)
         setError(err.message)
       } finally {
         setLoading(false)
@@ -33,82 +34,79 @@ export default function AdminPage() {
     load()
   }, [])
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-slate-400 animate-pulse font-mono tracking-widest">INITIALIZING SECURE LINK...</div>
-    </div>
-  )
+  if (error) {
+    return (
+      <div className="p-20 text-center">
+        <h1 className="text-red-500 text-2xl font-bold mb-4">Connection Error</h1>
+        <p className="text-slate-400">{error}</p>
+        <button onClick={() => window.location.reload()} className="mt-8 px-6 py-2 bg-white/10 rounded-lg">Retry</button>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin mb-4"></div>
+        <div className="text-white font-mono tracking-widest uppercase">Initializing Intelligence...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen px-4 py-12 md:py-20">
       <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+        <header className="flex justify-between items-center mb-12">
           <div>
-            <h1 className="text-4xl font-black mb-2 tracking-tight">Intelligence Dashboard</h1>
+            <h1 className="text-4xl font-black mb-2 tracking-tight text-white">Intelligence Dashboard</h1>
             <p className="text-slate-400 font-medium">Monitoring {leads.length} active lead qualifications</p>
           </div>
-          <div className="flex gap-4">
-            <Link to="/" className="px-5 py-2 rounded-xl border border-white/10 text-sm font-medium hover:bg-white/5 transition-colors">
-              Public Form
-            </Link>
-            <button 
-              onClick={() => window.location.reload()}
-              className="btn-primary py-2 text-sm"
-            >
-              Refresh Data
-            </button>
-          </div>
+          <Link to="/" className="text-indigo-400 hover:underline">Back to Form</Link>
         </header>
 
-        <div className="premium-card overflow-hidden">
+        <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left">
               <thead>
-                <tr className="bg-white/5 border-b border-white/5">
-                  <th className="px-8 py-6 text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Contact Intelligence</th>
-                  <th className="px-8 py-6 text-xs font-bold text-slate-500 uppercase tracking-[0.2em] text-center">AI Grade</th>
-                  <th className="px-8 py-6 text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Requirement Profile</th>
-                  <th className="px-8 py-6 text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Created At</th>
+                <tr className="bg-white/5 border-b border-white/5 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                  <th className="px-8 py-6">Contact Intelligence</th>
+                  <th className="px-8 py-6 text-center">AI Grade</th>
+                  <th className="px-8 py-6">Requirement Profile</th>
+                  <th className="px-8 py-6">Created At</th>
                   <th className="px-8 py-6"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {leads.map(lead => (
-                  <tr key={lead.id} className="group hover:bg-white/[0.02] transition-colors">
+                  <tr key={lead.id} className="hover:bg-white/[0.02]">
                     <td className="px-8 py-6">
-                      <div className="font-bold text-white text-base group-hover:text-indigo-400 transition-colors">{lead.name}</div>
-                      <div className="text-slate-400 text-sm font-medium">{lead.company_name}</div>
-                      <div className="text-slate-500 text-xs mt-1 font-mono">{lead.email}</div>
+                      <div className="font-bold text-white">{lead.name}</div>
+                      <div className="text-slate-400 text-xs">{lead.company_name}</div>
+                      <div className="text-slate-500 text-[10px] mt-1 font-mono">{lead.email}</div>
                     </td>
                     <td className="px-8 py-6 text-center">
-                      <div className={`inline-flex items-center justify-center w-12 h-12 rounded-2xl border ${GRADE_COLORS[lead.grade] || GRADE_COLORS.null} text-xl font-black shadow-lg`}>
+                      <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl border ${GRADE_COLORS[lead.grade] || GRADE_COLORS.null} text-lg font-black`}>
                         {lead.grade || '?'}
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <div className="text-white text-sm font-semibold mb-1">{lead.marketing_budget || 'Budget: Undisclosed'}</div>
-                      <div className="text-slate-400 text-xs truncate max-w-xs leading-relaxed italic">
-                        "{lead.company_needs || 'No specific needs documented.'}"
+                      <div className="text-white text-sm font-semibold">{lead.marketing_budget || 'N/A'}</div>
+                      <div className="text-slate-500 text-xs truncate max-w-xs italic">
+                        "{lead.company_needs || 'No details'}"
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-slate-500 text-xs font-mono">
-                      {new Date(lead.created_at).toLocaleDateString()} <br />
-                      {new Date(lead.created_at).toLocaleTimeString([], { hour: '2-numeric', minute: '2-numeric' })}
+                    <td className="px-8 py-6 text-slate-500 text-[10px] font-mono">
+                      {new Date(lead.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <Link 
-                        to={`/report/${lead.id}`} 
-                        className="text-xs font-bold uppercase tracking-widest text-indigo-400 hover:text-white transition-colors"
-                      >
-                        Details →
-                      </Link>
+                      <Link to={`/report/${lead.id}`} className="text-indigo-400 text-xs font-bold uppercase hover:text-white transition-colors">View →</Link>
                     </td>
                   </tr>
                 ))}
                 {leads.length === 0 && (
                   <tr>
                     <td colSpan="5" className="px-8 py-24 text-center text-slate-500 font-medium italic">
-                      SYSTEM STANDBY: No lead intelligence captured yet.
+                      No lead intelligence captured yet.
                     </td>
                   </tr>
                 )}
