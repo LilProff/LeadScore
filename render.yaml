@@ -18,3 +18,5 @@ services:
         value: https://openrouter.ai/api/v1
       - key: CORS_ORIGINS
         sync: false
+      - key: PYTHON_VERSION
+        value: 3.10.12
