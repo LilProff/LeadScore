@@ -15,10 +15,12 @@ async def create_lead(lead: LeadCreate, background_tasks: BackgroundTasks):
     try:
         # Insert lead with pending status
         data = lead.model_dump()
+        print(f"DEBUG: Inserting lead data: {data}")
         response = supabase.from_("leads").insert(data).execute()
+        print(f"DEBUG: Supabase response: {response}")
         
         if not response.data:
-            raise HTTPException(status_code=500, detail="Failed to save lead")
+            raise HTTPException(status_code=500, detail="Failed to save lead to database")
             
         new_lead = response.data[0]
         lead_id = new_lead["id"]
@@ -29,6 +31,7 @@ async def create_lead(lead: LeadCreate, background_tasks: BackgroundTasks):
         return {"id": lead_id, "status": "pending"}
         
     except Exception as e:
+        print(f"ERROR in create_lead: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
