@@ -1,16 +1,7 @@
 {
   "version": 2,
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/api",
-      "destination": "/api/",
-      "permanent": true
-    }
+    { "source": "/api/(.*)", "destination": "/api/index.py" },
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
