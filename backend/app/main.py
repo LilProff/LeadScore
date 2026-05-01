@@ -16,6 +16,10 @@ app.add_middleware(
 
 app.include_router(leads_router, prefix="/api")
 
+@app.get("/")
+async def root() -> dict:
+    return {"message": "Lead Scoring API is running", "docs": "/docs"}
+
 @app.get("/api/health")
 async def health() -> dict:
     return {"ok": True}
