@@ -19,9 +19,12 @@ export default function AdminPage() {
   useEffect(() => {
     async function load() {
       try {
+        console.log('Fetching leads...')
         const data = await listLeads()
+        console.log('Leads received:', data)
         setLeads(data)
       } catch (err) {
+        console.error('Fetch error:', err)
         setError(err.message)
       } finally {
         setLoading(false)
